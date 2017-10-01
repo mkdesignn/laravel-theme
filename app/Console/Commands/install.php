@@ -65,7 +65,6 @@ class install extends Command
     public function handle()
     {
 
-
         // connect to database
         $this->connectToDatabase();
 
@@ -102,8 +101,9 @@ class install extends Command
      * @param $newValue
      */
     private function setEnvironmentValue($environmentName, $configKey, $newValue) {
+
         file_put_contents(App::environmentFilePath(), str_replace(
-            $environmentName . '=' .  env($configKey),
+            $environmentName . '=' . env($configKey),
             $environmentName . '=' . $newValue,
             file_get_contents(App::environmentFilePath())
         ));
@@ -130,16 +130,7 @@ class install extends Command
 
             $pdo = new \PDO($database_driver . ":host=" . $database_host . ";port=" . $database_port_number . ';dbname=' . $database_name, $database_user_name, $database_password);
 
-
-            $this->setEnvironmentValue("DB_CONNECTION", 'DB_CONNECTION', $database_driver);
-            $this->setEnvironmentValue("DB_HOST", 'DB_HOST', $database_host);
-            $this->setEnvironmentValue("DB_PORT", 'DB_PORT', $database_port_number);
-            $this->setEnvironmentValue("DB_DATABASE", 'DB_DATABASE', $database_name);
-            $this->setEnvironmentValue("DB_USERNAME", 'DB_USERNAME', $database_user_name);
-            $this->setEnvironmentValue("DB_PASSWORD", 'DB_PASSWORD', $database_password);
-
-            $this->setEnvironmentValue("APP_URL", 'APP_URL', $webapp_address);
-            $this->setEnvironmentValue("WEBAPP_TITLE", 'WEBAPP_TITLE', $webapp_name);
+            $this->call('config:clear');
 
             Config::set('database.connections.mysql.host', $database_host);
             Config::set('database.connections.mysql.driver', $database_driver);
@@ -148,6 +139,14 @@ class install extends Command
             Config::set('database.connections.mysql.username', $database_user_name);
             Config::set('database.connections.mysql.password', $database_password);
 
+            $this->setEnvironmentValue("DB_CONNECTION", 'DB_CONNECTION', $database_driver);
+            $this->setEnvironmentValue("DB_HOST", 'DB_HOST', $database_host);
+            $this->setEnvironmentValue("DB_PORT", 'DB_PORT', $database_port_number);
+            $this->setEnvironmentValue("DB_DATABASE", 'DB_DATABASE', $database_name);
+            $this->setEnvironmentValue("DB_USERNAME", 'DB_USERNAME', $database_user_name);
+            $this->setEnvironmentValue("DB_PASSWORD", 'DB_PASSWORD', $database_password);
+            $this->setEnvironmentValue("APP_URL", 'APP_URL', $webapp_address);
+            $this->setEnvironmentValue("WEBAPP_TITLE", 'WEBAPP_TITLE', $webapp_name);
 
         } catch(\Exception $ex){
 
@@ -224,28 +223,28 @@ class install extends Command
 
     private function addUserMethod(){
         return '
-            /**
-             * @return \Illuminate\Database\Eloquent\Relations\HasMany
-             */
-            public function roles(){
-                return $this->hasMany("App\\Role", "id", "role_id");
-            }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function roles(){
+        return $this->hasMany("App\\Role", "id", "role_id");
+    }
 
-            /**
-             * @param $query
-             * @param $parameters
-             * @param $value
-             */
-            public function scopeSearch($query, $parameters, $value){
+    /**
+     * @param $query
+     * @param $parameters
+     * @param $value
+     */
+    public function scopeSearch($query, $parameters, $value){
 
-                foreach( $parameters as $key => $parameter ){
-                    if( $key == 0 )
-                        $query->where($parameter[0], "LIKE", "%".$value."%");
-                    else
-                        $query->orWhere($parameter[0], "LIKE", "%".$value."%");
+        foreach( $parameters as $key => $parameter ){
+            if( $key == 0 )
+                $query->where($parameter[0], "LIKE", "%".$value."%");
+            else
+                $query->orWhere($parameter[0], "LIKE", "%".$value."%");
 
-                }
-            }';
+        }
+    }';
     }
 
     /**
