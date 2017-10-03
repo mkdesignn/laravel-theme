@@ -172,7 +172,7 @@ class install extends Command
         $this->seed->makeRole();
 
         // create one user
-        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password), "role_id" => "8" ]);
+        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password), "role_id" => "6" ]);
 
     }
 
@@ -207,7 +207,7 @@ class install extends Command
 
             // if table was user
             if( $table === 'user' )
-                $protect_columns .= " \n \n ".$this->addUserMethod()." \n \n ";
+                continue;
 
             $file_content = file_get_contents(app_path()."/".camel_case($table).".php");
 
@@ -219,32 +219,6 @@ class install extends Command
             file_put_contents(app_path()."/".camel_case($table).".php", $file_content);
 
         }
-    }
-
-    private function addUserMethod(){
-        return '
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function roles(){
-        return $this->hasMany("App\\Role", "id", "role_id");
-    }
-
-    /**
-     * @param $query
-     * @param $parameters
-     * @param $value
-     */
-    public function scopeSearch($query, $parameters, $value){
-
-        foreach( $parameters as $key => $parameter ){
-            if( $key == 0 )
-                $query->where($parameter[0], "LIKE", "%".$value."%");
-            else
-                $query->orWhere($parameter[0], "LIKE", "%".$value."%");
-
-        }
-    }';
     }
 
     /**
@@ -261,7 +235,7 @@ class install extends Command
         exec('php artisan make:model Role');
         exec('php artisan make:model Status');
         exec('php artisan make:model Tag');
-        exec('php artisan make:model User');
+//        exec('php artisan make:model User');
         exec('php artisan make:model UserMeta');
         exec('php artisan make:model UserRole');
 
