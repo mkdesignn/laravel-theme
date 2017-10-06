@@ -115,6 +115,7 @@ class install extends Command
             $this->setEnvironmentValue("DB_PORT", 'DB_PORT', $database_port_number);
             $this->setEnvironmentValue("DB_DATABASE", 'DB_DATABASE', $database_name);
             $this->setEnvironmentValue("DB_USERNAME", 'DB_USERNAME', $database_user_name);
+            $this->setEnvironmentValue("DB_PASSWORD", 'DB_PASSWORD', $database_password);
             $this->setEnvironmentValue("APP_URL", 'APP_URL', $webapp_address);
             $this->setEnvironmentValue("WEBAPP_TITLE", 'WEBAPP_TITLE', $webapp_name);
 
