@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class install extends Command
 {
@@ -34,6 +35,16 @@ class install extends Command
      * @var
      */
     protected $tables;
+
+    /**
+     * @var
+     */
+    protected $username;
+
+    /**
+     * @var
+     */
+    protected $password;
 
     /**
      * Create a new command instance.
@@ -106,6 +117,8 @@ class install extends Command
             $database_password = $this->ask("tell me your database password", false);
             $webapp_address = $this->ask("tell me your webapp address", false);
             $webapp_name = $this->ask("tell me your webapp name", false);
+            $username = $this->ask("tell me your username", false);
+            $password = $this->ask("tell me your password", false);
 
 
             $pdo = new \PDO($database_driver . ":host=" . $database_host . ";port=" . $database_port_number . ';dbname=' . $database_name, $database_user_name, $database_password);
@@ -143,7 +156,7 @@ class install extends Command
         $this->seed->makeRole();
 
         // create one user
-        factory(User::class)->create();
+        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password) ]);
 
     }
 
