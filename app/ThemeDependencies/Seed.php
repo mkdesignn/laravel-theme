@@ -1,7 +1,5 @@
 <?php
 namespace App\ThemeDependencies;
-use App\Role;
-use App\Status;
 
 /**
  * Created by PhpStorm.
@@ -21,13 +19,9 @@ class Seed
     private $role;
 
     /**
-     * @param Status $status
-     * @param Role $role
      */
-    function __construct(Status $status, Role $role){
+    function __construct(){
 
-        $this->status = $status;
-        $this->role = $role;
     }
 
     /**
@@ -49,7 +43,8 @@ class Seed
         'trash'=>'زباله دان',
         'pending'=>'در انتظار تایید'
         ];
-
+        $status = "App\\Status";
+        $this->status = new $status();
         foreach($statuses as $key => $status){
             $this->status->create(["name"=>$key, "value"=>$status]);
         }
@@ -68,6 +63,8 @@ class Seed
                    'writer'=>       ['نویسنده', 'نویسنده مطالب']
                  ];
 
+        $role = "App\\Role";
+        $this->role = new $role();
         foreach($roles as $key => $role){
             $this->role->create(["name"=>$key, "value"=>$role[0], "comment"=>$role[1]]);
         }

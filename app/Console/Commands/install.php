@@ -70,9 +70,11 @@ class install extends Command
         // migrate the tables
         $this->call("migrate");
 
+        //generates model
+        $this->generateModel();
+
         // scaffold the model tables with appropriate data
         $this->scaffoldModel();
-
 
         // seed the tables
         $this->seed();
@@ -117,8 +119,8 @@ class install extends Command
             $database_password = $this->ask("tell me your database password", false);
             $webapp_address = $this->ask("tell me your webapp address", false);
             $webapp_name = $this->ask("tell me your webapp name", false);
-            $username = $this->ask("tell me your username", false);
-            $password = $this->ask("tell me your password", false);
+            $this->username = $this->ask("tell me your username", false);
+            $this->password = $this->ask("tell me your password", false);
 
 
             $pdo = new \PDO($database_driver . ":host=" . $database_host . ";port=" . $database_port_number . ';dbname=' . $database_name, $database_user_name, $database_password);
@@ -189,6 +191,10 @@ class install extends Command
             $protect_columns = substr($protect_columns, 0, strlen($protect_columns) - 1);
             $protect_columns .= "];";
 
+            // if table was user
+            if( $table === 'user' )
+                $protect_columns .= " \n \n ".$this->addUserMethod()." \n \n ";
+
             $file_content = file_get_contents(app_path()."/".camel_case($table).".php");
 
             //replace the content between {  }
@@ -199,5 +205,51 @@ class install extends Command
             file_put_contents(app_path()."/".camel_case($table).".php", $file_content);
 
         }
+    }
+
+    private function addUserMethod(){
+        return '
+            /**
+             * @return \Illuminate\Database\Eloquent\Relations\HasMany
+             */
+            public function roles(){
+                return $this->hasMany("App\\Role", "id", "role_id");
+            }
+
+            /**
+             * @param $query
+             * @param $parameters
+             * @param $value
+             */
+            public function scopeSearch($query, $parameters, $value){
+
+                foreach( $parameters as $key => $parameter ){
+                    if( $key == 0 )
+                        $query->where($parameter[0], "LIKE", "%".$value."%");
+                    else
+                        $query->orWhere($parameter[0], "LIKE", "%".$value."%");
+
+                }
+            }';
+    }
+
+    /**
+     * generate models
+     */
+    private function generateModel(){
+
+        exec('php artisan make:model Category');
+        exec('php artisan make:model Comment');
+        exec('php artisan make:model File');
+        exec('php artisan make:model Meta');
+        exec('php artisan make:model Post');
+        exec('php artisan make:model PostCategory');
+        exec('php artisan make:model Role');
+        exec('php artisan make:model Status');
+        exec('php artisan make:model Tag');
+        exec('php artisan make:model User');
+        exec('php artisan make:model UserMeta');
+        exec('php artisan make:model UserRole');
+
     }
 }
