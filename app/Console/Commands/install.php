@@ -6,6 +6,7 @@ use App\ThemeDependencies\Seed;
 use App\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -64,8 +65,13 @@ class install extends Command
     public function handle()
     {
 
+
         // connect to database
         $this->connectToDatabase();
+
+        // re render the config cache file
+//        $this->call("config:clear");
+
 
         // migrate the tables
         $this->call("migrate");
@@ -125,14 +131,26 @@ class install extends Command
 
             $pdo = new \PDO($database_driver . ":host=" . $database_host . ";port=" . $database_port_number . ';dbname=' . $database_name, $database_user_name, $database_password);
 
-            $this->setEnvironmentValue("DB_CONNECTION", 'DB_CONNECTION', $database_driver);
-            $this->setEnvironmentValue("DB_HOST", 'DB_HOST', $database_host);
-            $this->setEnvironmentValue("DB_PORT", 'DB_PORT', $database_port_number);
-            $this->setEnvironmentValue("DB_DATABASE", 'DB_DATABASE', $database_name);
-            $this->setEnvironmentValue("DB_USERNAME", 'DB_USERNAME', $database_user_name);
-            $this->setEnvironmentValue("DB_PASSWORD", 'DB_PASSWORD', $database_password);
+
+            Config::set('database.connections.mysql.host', $database_host);
+            Config::set('database.connections.mysql.driver', $database_driver);
+            Config::set('database.connections.mysql.port', $database_host);
+            Config::set('database.connections.mysql.database', $database_name);
+            Config::set('database.connections.mysql.username', $database_user_name);
+            Config::set('database.connections.mysql.password', $database_password);
+
+
+//            $this->setEnvironmentValue("DB_CONNECTION", 'DB_CONNECTION', $database_driver);
+//            $this->setEnvironmentValue("DB_HOST", 'DB_HOST', $database_host);
+//            $this->setEnvironmentValue("DB_PORT", 'DB_PORT', $database_port_number);
+//            $this->setEnvironmentValue("DB_DATABASE", 'DB_DATABASE', $database_name);
+//            $this->setEnvironmentValue("DB_USERNAME", 'DB_USERNAME', $database_user_name);
+//            $this->setEnvironmentValue("DB_PASSWORD", 'DB_PASSWORD', $database_password);
             $this->setEnvironmentValue("APP_URL", 'APP_URL', $webapp_address);
             $this->setEnvironmentValue("WEBAPP_TITLE", 'WEBAPP_TITLE', $webapp_name);
+
+
+
 
         } catch(\Exception $ex){
 
