@@ -173,7 +173,7 @@ class install extends Command
         $this->seed->makeRole();
 
         // create one user
-        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password), "role_id" => "9" ]);
+        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password), "role_id" => "2" ]);
 
     }
 
