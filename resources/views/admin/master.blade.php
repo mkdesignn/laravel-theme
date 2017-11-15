@@ -3,11 +3,10 @@
 <head>
     <title>{{env('WEBAPP_TITLE')}}</title>
     <meta charset='UTF-8'>
-    {!! Html::script("js/vendor-css.js") !!}
+    {!! Html::style('admin/css/bootstrap.min.css')!!}
     {!! Html::style('admin/css/style.css')!!}
-{{--    {!! Html::style('node_modules/bootstrap3/dist/css/bootstrap.min.css')!!}--}}
-    {!! Html::style('admin/css/font.css')!!}
-    {!! Html::style("admin/css/font-awesome.css") !!}
+    {!! Html::style("admin/css/admin.css") !!}
+    {!! Html::style("admin/css/font.css") !!}
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -122,10 +121,9 @@
     <div class="top-menu"></div>
     <div class="search_wrapper" id="search_wrapper"></div>
     <header>
-        <div class="top-right-menu" style="overflow:auto;float:right;width:250px;">
+        <div class="top-right-menu" style="overflow:auto;float:right;width:250px;height:100%;">
             <div class="logo" style="line-height: 1.8;text-align: right;">
-                نکات کلیدی کد نویسی  <br>
-                <b> codedesign.ir </b>
+                <b>{{env('APP_URL')}}</b>
             </div>
             <span class="icomoon-uniF0C9 sidebar-toggle"></span>
         </div>

@@ -1,0 +1,31 @@
+.tags_wrapper > ul.tags{
+    background-color:#fff;
+    border:1px solid rgba(42,42,42,.2);
+    /*padding:15px;*/
+}
+
+ul.tags .tags_li{
+    padding:10px;
+    border-bottom:1px solid rgba(42,42,42,.3);
+    display:block;
+    overflow: auto;
+    position:relative;
+}
+
+ul.tags .tags_li .tags_name{
+    display:block;
+    width:92%;
+    float:right;
+}
+
+ul.tags .tags_li .checkbox{
+    display:block;
+    width:8%;
+    float:right;
+}
+
+ul.tags .remove_tag{
+    position:absolute;
+    left:11px;
+    top:14px;
+}

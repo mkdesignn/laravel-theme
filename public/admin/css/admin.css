@@ -40,10 +40,10 @@
 
 @font-face {
   font-family:"IranSans";
-  src: url("../../resources/assets/fonts/IRANSans-web.eot?#iefix") format("embedded-opentype"),
-  url("../../resources/assets/fonts/IRANSans(FaNum).ttf") format('truetype'),
-  url("../../resources/assets/fonts/IRANSans-web.woff") format('woff'),
-  url("../../resources/assets/fonts/IRANSans-web.woff2") format('woff2');
+  src: url("../../fonts/IRANSans-web.eot?#iefix") format("embedded-opentype"),
+  url("../../fonts/IRANSans(FaNum).ttf") format('truetype'),
+  url("../../fonts/IRANSans-web.woff") format('woff'),
+  url("../../fonts/IRANSans-web.woff2") format('woff2');
 }
 
 body{
@@ -234,6 +234,7 @@ header .logo{
 
 .menu li{
   cursor: pointer;
+  display:block;
 }
 
 .menu .sub-menu a{

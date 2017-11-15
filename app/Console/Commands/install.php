@@ -108,6 +108,7 @@ class install extends Command
             file_get_contents(App::environmentFilePath())
         ));
 
+
     }
 
     /**
@@ -172,7 +173,7 @@ class install extends Command
         $this->seed->makeRole();
 
         // create one user
-        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password), "role_id" => "6" ]);
+        factory(User::class)->create([ 'username'=> $this->username, 'password' => Hash::make($this->password), "role_id" => "9" ]);
 
     }
 
