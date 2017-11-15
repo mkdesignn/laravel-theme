@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
         if( class_exists('Laracasts\Generators\GeneratorsServiceProvider') )
             $this->app->register('Laracasts\Generators\GeneratorsServiceProvider');
 
