@@ -2,6 +2,7 @@
     import Vue from 'vue';
     Vue.directive('loading', {
         bind: function(el, obj, vnode, oldnode) {
+
             oldnode.data.__$el = jQuery(el)
             oldnode.data.__originalPosition = oldnode.data.__$el.css('position')
             oldnode.data.__$loaderEl = jQuery('<div class="loading"> <div class="loading--inner"> <span></span><span></span><span></span> </div> </div>')
@@ -23,10 +24,10 @@
                     .find('.loading').remove()
             }
 //            if (value) {
-//                this.__$el.css('position', 'relative')
+//                this.__$el.style('position', 'relative')
 //                this.__$loaderEl.addClass('loading--trans-bg').prependTo(this.el)
 //            } else {
-//                this.__$el.css('position', this.__originalPosition)
+//                this.__$el.style('position', this.__originalPosition)
 //                        .find('.loading').remove()
 //            }
         },

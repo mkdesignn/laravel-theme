@@ -1,5 +1,7 @@
 <template>
     <div class="grid_wrapper">
+        <notification v-on:notify-handler="notifyHandler" :notify_danger="notify_danger"  :notify_success="notify_success"
+                      :notify_alarm="notify_alarm" :notify_warning="notify_warning" :notify_text="notify_text"></notification>
         <div class="grid_header" style="overflow:hidden;">
             <div class="col-md-3 align_right">
                 <div class="form-group">
@@ -31,15 +33,19 @@
                 <table class="data_grid">
                     <thead>
                         <tr>
-                            <td v-for="h in head">
+                            <td v-for="h in parseHead">
                                 {{h}}
                             </td>
                         </tr>
                     </thead>
                     <tbody>
                        <tr v-for="(row, index) in rows">
-                           <td v-for="cell in Object.keys(head)">
-                               {{ row[cell] }}
+                           <td  v-for="cell in Object.keys(parseHead)">
+                               <span v-if="cell !== 'operation'">{{traverseCell(cell, row)}}</span>
+                               <span v-else>
+                                   <a v-for="button in $parent.buttons" target="_blank" :href="button.url.replace('{id}', row.id)"
+                                      :class="button.btnClass" v-on:click="showNotification($event, button.action, button.confirm_text, row.fake_id, button.url.replace('{id}', row.id))" :style="button.style">{{button.label}}</a>
+                               </span>
                            </td>
                        </tr>
                     </tbody>
@@ -63,9 +69,9 @@
 
 <script>
 
-    import axios from 'axios';
     import Paginate from 'vuejs-paginate';
     import loadings from './loading-dirctive.vue';
+    import notification from './notification.vue';
     axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest';
 
     export default{
@@ -81,22 +87,99 @@
                     init: false,
                     size: '20px',
                     color: 'rgba(42,42,42,.3)'
-                }
+                },
+                notify_danger:false,
+                notify_success:false,
+                notify_alarm:false,
+                notify_warning: false,
+                notify_text:"",
+                selected_row: 0,
+                request_link: ''
             }
         },
         components:{
-            paginate: Paginate
+            paginate: Paginate,
+            notification: notification
         },
         props: {
             head:'',
-            url: ''
+            url: '',
+            created_record: ''
         },
         watch:{
             search: function(){
                 this.fillGrid(1);
+            },
+            created_record: function(createdRecord){
+                this.rows.push(createdRecord);
+            },
+            rows: function(rows){
+                var vm = this;
+                rows.forEach(function(value, index){
+                    value.fake_id = ( (vm.page_id * vm.row_per_page) - vm.row_per_page ) + index + 1;
+                })
+            }
+        },
+        computed: {
+            parseHead: function(){
+
+                if( Object.keys(this.$parent.buttons).length > 0 )
+                    this.head['operation'] =  "تنضیمات";
+
+                return this.head;
+                //return JSON.parse(this.head.toString());
             }
         },
         methods:{
+            showNotification: function(event, action, confirm_text, row_id, request_link, fill_data){
+
+                if( action === 'confirm' )
+                {
+                    event.preventDefault();
+                    this.notify_alarm = true;
+                    this.selected_row = this.rows[row_id];
+                    this.notify_text = confirm_text;
+                    this.request_link = request_link;
+                    this.notify_success = false;
+                    return false;
+
+                } else if( action === "ajax-request" ){
+
+                    event.preventDefault();
+                    var vm = this;
+                    axios.get(this.request_link).then(function(response){
+                        vm.$parent[fill_data] = response.data;
+                    });
+
+                }
+
+            },
+            notifyHandler: function(){
+                var vm = this;
+                axios.get(this.request_link).then(function(response){
+                    vm.notify_alarm = false;
+                    vm.notify_success = true;
+                    vm.notify_text = "عملیات با موفقیت انجام شد .";
+                    window.setTimeout(function(){
+                        vm.notify_success = false;
+                    }, 1000);
+                    vm.fillGrid(1);
+                })
+            },
+            traverseCell: function(cell, row){
+                if( cell.indexOf(".") >= 0 ){
+
+                    var cell_traverse = cell.split("."),
+                        nested_cell = row;
+
+                    cell_traverse.forEach(function(value, key){
+                        nested_cell = nested_cell[value];
+                    });
+
+                    return nested_cell;
+                } else
+                     return row[cell];
+            },
             changePaginate: function(pageNum){
                 this.page_id = pageNum;
                 this.fillGrid(pageNum);
@@ -112,21 +195,12 @@
                         search: this.search
                     }
                 }).then(function(response){
+
                     vm.rows = response.data[0].data;
                     vm.last_page = response.data[0].last_page;
                     vm.total = response.data[0].total;
-
-                    // filter the rows id
-                    vm.filterRowsId();
-
                     vm.loading.init = false;
                 });
-            },
-            filterRowsId: function(){
-                var vm = this;
-                this.rows.forEach(function(value, index){
-                    value.id = ( (vm.page_id * vm.row_per_page) - vm.row_per_page ) + index + 1;
-                })
             },
             changeRowPerPage: function(){
                 this.page_id = 1;
