@@ -41,9 +41,9 @@ Text Domain: Codedesign
 p,div,span,label,ol,ul,li,a,input[type='text'],:before,:after,button,input{
 
     margin:0px;
-    padding:0px;
-    border:0px;
-    border:none;
+    /*padding:0px;*/
+    /*border:0px;*/
+    /*border:none;*/
     outline:none;
 }
 
