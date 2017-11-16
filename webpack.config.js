@@ -1,7 +1,7 @@
 var webpack = require("webpack");
 var path = require("path");
 var entryPointsPathPrefix = './resources/assets/js';
-var entryPointsPathPrefixSass = './resources/assets/sass';
+var entryPointsPathPrefixSass = './resources/assets/style';
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 //const extractCSS = new ExtractTextPlugin('./dist/style/[name].style');
 
@@ -12,16 +12,8 @@ module.exports = {
 
     //entry: ['./resources/assets/js'],
     //entry : [ entryPointsPathPrefix + '/invoice/create.js', entryPointsPathPrefix + '/invoice/index.js' ],
-    entry :{'invoice-create': entryPointsPathPrefix + '/invoice/create.js',
-        'invoice-index': entryPointsPathPrefix + '/invoice/index.js',
-        'formula-create': entryPointsPathPrefix + '/formula/create.js',
-        'create-item': entryPointsPathPrefix + '/formula/items/create.js',
-        'create-agent': entryPointsPathPrefix + '/agency/create.js',
-        'vendor-js': entryPointsPathPrefix + '/vendor-js.js',
-        'admin': entryPointsPathPrefixSass+'/admin.scss',
-        'font': entryPointsPathPrefixSass+'/font.scss',
-        'loading': entryPointsPathPrefixSass+'/loading.scss',
-        'style': entryPointsPathPrefixSass+'/style.scss'
+    entry :{'vendor-js': entryPointsPathPrefix + '/vendor-js.js',
+        'loading': entryPointsPathPrefixSass+'/loading.scss'
         //'vendor-style': entryPointsPathPrefix + '/vendor-style.js'
     },
     output: {
